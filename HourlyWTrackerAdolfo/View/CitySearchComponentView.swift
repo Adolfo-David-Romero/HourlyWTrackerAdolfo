@@ -7,27 +7,22 @@
 
 import SwiftUI
 import Foundation
+
 struct CitySearchComponentView: View {
-    @State var cityName: String = "" // User input for city name
-    @ObservedObject var weatherViewModel = WeatherViewModel () // Observed ViewModel
+    @State private var city: String = ""
+    @ObservedObject var viewModel: WeatherViewModel
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("Search Weather by City")
-                .font(.headline)
-                .padding()
-            
-            // TextField for user input
-            TextField("Enter city name", text: $cityName)
+            TextField("Enter city name", text: $city)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
                 .autocapitalization(.words)
                 .disableAutocorrection(true)
             
-            // Search Button
             Button(action: {
                 Task {
-                    try await weatherViewModel.fetchWeatherForCity(cityName)
+                    await viewModel.fetchWeatherForCity(city)
                 }
             }) {
                 Text("Search")
@@ -39,29 +34,15 @@ struct CitySearchComponentView: View {
                     .cornerRadius(8)
             }
             .padding(.horizontal)
-            .disabled(weatherViewModel.isLoading) // Disable button while loading
+            .disabled(viewModel.isLoading)
             
-            // Loading indicator
-            if weatherViewModel.isLoading {
+            if viewModel.isLoading {
                 ProgressView()
-                    .padding()
             }
             
-            // Error message
-            if let errorMessage = weatherViewModel.errorMessage {
+            if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
-                    .padding()
-            }
-            
-            // Display weather data if available
-            if let weather = weatherViewModel.weatherData {
-                VStack(spacing: 10) {
-                    Text("Temperature: \(weather.current.temp)°C")
-                    Text("Condition: \(weather.current.weather.first?.description ?? "N/A")")
-                }
-                .padding()
             }
         }
         .padding()
@@ -69,5 +50,5 @@ struct CitySearchComponentView: View {
 }
 
 #Preview {
-    CitySearchComponentView(weatherViewModel: WeatherViewModel())
+    CitySearchComponentView(viewModel: WeatherViewModel())
 }

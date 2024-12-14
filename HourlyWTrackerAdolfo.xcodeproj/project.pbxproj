@@ -10,22 +10,9 @@
 		BC56D0E02CF0DC4A0014205C /* HourlyWTrackerAdolfo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HourlyWTrackerAdolfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BC2343322D0D099D00093C05 /* Exceptions for "HourlyWTrackerAdolfo" folder in "HourlyWTrackerAdolfo" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ViewModel/WeatherViewModel.swift,
-			);
-			target = BC56D0DF2CF0DC4A0014205C /* HourlyWTrackerAdolfo */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BC56D0E22CF0DC4B0014205C /* HourlyWTrackerAdolfo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BC2343322D0D099D00093C05 /* Exceptions for "HourlyWTrackerAdolfo" folder in "HourlyWTrackerAdolfo" target */,
-			);
 			path = HourlyWTrackerAdolfo;
 			sourceTree = "<group>";
 		};
