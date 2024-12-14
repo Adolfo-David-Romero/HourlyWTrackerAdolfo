@@ -9,21 +9,20 @@ import Foundation
 import SwiftUI
 import CoreLocation
 
-class WeatherViewModel: ObservableObject{
-    @Published var weatherDataList: [WeatherModel] = []
+class WeatherViewModel: ObservableObject {
+    @Published var weatherData: WeatherResponse?
     @Published var currentLink: URL?
     @Published var errorMessage: String?
     
-    //API/URL Info
+    // API/URL Info
     let apiKey = "12013a6d197f9d54bc5a0e39861749a4"
-    let baseUrl = "https://api.openweathermap.org/data/3.0/onecall?"
+    let baseUrl = "https://api.openweathermap.org/data/3.0/onecall"
     
-    
-    func fetchWeatherData(latitude: Double, longitude: Double) {
-        weatherDataList = [] // Clear the current list to avoid duplication
+    /// Fetch weather data using latitude and longitude
+    func fetchWeatherData(latitude: Double, longitude: Double, exclude: String = "minutely") {
+        // Construct the URL string with query parameters
+        let urlStr = "\(baseUrl)?lat=\(latitude)&lon=\(longitude)&exclude=\(exclude)&appid=\(apiKey)&units=metric"
         
-        // Construct the URL string to match the exact format
-        let urlStr = "\(baseUrl)?key=\(apiKey)&q=\(latitude),\(longitude)&aqi=yes"
         guard let url = URL(string: urlStr) else {
             DispatchQueue.main.async {
                 self.errorMessage = "Invalid URL"
@@ -32,6 +31,7 @@ class WeatherViewModel: ObservableObject{
         }
         currentLink = url
         
+        // Make the API request
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
@@ -39,7 +39,8 @@ class WeatherViewModel: ObservableObject{
                 }
                 return
             }
-            // Check if response is a valid HTTPURLResponse and log the status code
+            
+            // Check if the response is a valid HTTP response
             if let response = response as? HTTPURLResponse {
                 print("Status Code: \(response.statusCode)")
                 if response.statusCode != 200 {
@@ -50,6 +51,7 @@ class WeatherViewModel: ObservableObject{
                 }
             }
             
+            // Ensure data exists
             guard let data = data else {
                 DispatchQueue.main.async {
                     self.errorMessage = "No data received from server."
@@ -57,15 +59,16 @@ class WeatherViewModel: ObservableObject{
                 return
             }
             
-            //For debugging
+            // Debugging: Print raw JSON response
             if let rawResponse = String(data: data, encoding: .utf8) {
                 print("Raw Response: \(rawResponse)")
             }
             
+            // Decode the data into the WeatherResponse model
             do {
-                let weather = try JSONDecoder().decode(WeatherModel.self, from: data)
+                let weather = try JSONDecoder().decode(WeatherResponse.self, from: data)
                 DispatchQueue.main.async {
-                    self.weatherDataList.append(weather)
+                    self.weatherData = weather
                     self.errorMessage = nil
                 }
             } catch {
@@ -76,4 +79,3 @@ class WeatherViewModel: ObservableObject{
         }.resume()
     }
 }
-
